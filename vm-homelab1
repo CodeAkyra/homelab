@@ -1,0 +1,38 @@
+CSR1000V (R1)
+FortiGate V7.6.4 (F1)
+
+Setting up R1
+R1
+  en
+    confi t
+      no ip domain lookup
+      line vty 0 4
+        login local
+        transport input ssh telnet
+        logging sync
+        exec-timeout  0 0
+        exit
+      user admin privilege 15 secret pass
+      enable secret pass
+      hostname R1
+      ip domain name r1.com
+      crypto key generate rsa
+        2048
+      lldp run
+      int g1
+        ip add 100.0.0.10 255.255.255.0
+        no shut
+        exit
+
+Setting up F1
+  config sys int
+    edit port1
+      set mode static
+      set ip 100.0.0.20 255.255.255.0
+      set allowaccess ssh telnet http https ping
+      set lldp-transmission enable
+      set lldp-reception enable
+      set device-identification enable
+      end
+  diagnose device user list
+
