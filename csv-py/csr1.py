@@ -20,18 +20,22 @@
 #             ip add 208.8.8.50 255.255.255.0
 #             no shut
 #             exit
-#         crypto pki trustpoint RESTCON-TP
+#           
+#         (encountered problem: trustpoint associated with http is either invalid or does not exist)
+#         (enter the following commands bellow to create a self-signed certificate for RESTCONF)
+#
+#         crypto pki trustpoint RESTCONF-TP
 #             enrollment selfsigned
 #             subject-name CN=CSR-TEST-PY
-#             rsakeypair RESTCON-KEY
+#             rsakeypair RESTCONF-KEY
 #             exit
-#         crypto pki enroll RESTCON-TP
+#         crypto pki enroll RESTCONF-TP
 #             no
 #             yes
 #             208.8.8.50
 #             yes
 #         ip http secure-server
-#         ip http secure-trustpoint RESTCON-TP
+#         ip http secure-trustpoint RESTCONF-TP
 #         restconf
 #         end
 
