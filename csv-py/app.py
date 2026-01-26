@@ -9,9 +9,13 @@ def index():
     if request.method == "POST":
         device = {
             "device_type": "cisco_xe",
-            "host": request.form["ip"],
-            "username": request.form["username"],
-            "password": request.form["password"],
+            # "host": request.form["ip"],
+            # "username": request.form["username"],
+            # "password": request.form["password"],
+            "device_type": "cisco_xe",
+            "host": "208.8.8.50",
+            "username": "admin",
+            "password": "C1sc0123",
         }
 
         conn = ConnectHandler(**device)
