@@ -1,24 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <title>Network Device Command Runner</title>
+  <title>NOC Command Panel</title>
 </head>
 
 <body>
-  <form method="post">
-    <!-- IP: <input name="ip"><br>
-    Username: <input name="username"><br>
-    Password: <input name="password" type="password"><br> -->
-    Command: <input name="command"><br>
-    <button type="submit" class="btn btn-success">Run</button>
-  </form>
-  <pre class="bg-dark text-light p-3 rounded">{{ output }}</pre>
+
+  <h2>Quick Commands</h2>
+
+  <button onclick="run('interfaces')">Show Interfaces</button>
+  <button onclick="run('routes')">Show Routes</button>
+  <button onclick="run('version')">Show Version</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    function run(action) {
+      fetch("/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("output").innerText = data.output || data.error;
+        });
+    }
+  </script>
+
 </body>
 
 </html>
