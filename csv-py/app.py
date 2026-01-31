@@ -35,7 +35,8 @@ from netmiko import ConnectHandler
 app = Flask(__name__)
 
 COMMANDS = {
-    "interfaces": "show ip interface brief",
+    "interfaces": "show ip interface",
+    "interfaces brief": "show ip interface brief",
     "routes": "show ip route",
     "version": "show version",
     "clock": "show clock",
