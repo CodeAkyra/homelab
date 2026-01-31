@@ -27,6 +27,7 @@
 # app.run(debug=True)
 
 # acts like RESTAPI
+# cisco UI command tool / informative app using python and some framework and libraries etc etc :D
 
 from flask import Flask, jsonify, request, render_template
 from netmiko import ConnectHandler
@@ -37,6 +38,11 @@ COMMANDS = {
     "interfaces": "show ip interface brief",
     "routes": "show ip route",
     "version": "show version",
+    "clock": "show clock",
+    "cdp": "show cdp",
+    "lldp": "show lldp",
+    "lldp run": "lldp run",
+    "cdp run": "cdp run",
 }
 
 DEVICE = {
