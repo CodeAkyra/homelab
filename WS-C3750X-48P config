@@ -149,6 +149,30 @@ show spanning-tree
 
 
 
+=======================================================================
+=======================================================================
+=======================================================================
+
+en
+  conf t
+    no service pad
+    no ip http server
+    no ip http secure-server
+    service password-encryption
+  ip routing
+    username admin privilege 15 secret C1sc0123
+    line con 0
+      loggin sync
+      exit
+    vlan 10
+      name DEBUG
+      exit
+    int vlan10
+      ip add 192.168.1.2 255.255.255.0 (depends sa ip ng router mo)
+      no shut
+      exit
+    ip default-gateway 192.168.1.1
+
 
 
       
