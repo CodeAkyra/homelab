@@ -27,17 +27,50 @@
 # app.run(debug=True)
 
 # acts like RESTAPI
+# cisco UI command tool / informative app using python and some framework and libraries etc etc :D
 
-from flask import Flask, jsonify
-from restconf.client import get_interfaces
+from flask import Flask, jsonify, request, render_template
+from netmiko import ConnectHandler
 
 app = Flask(__name__)
 
+COMMANDS = {
+    "interfaces": "show ip interface",
+    "interfaces brief": "show ip interface brief",
+    "routes": "show ip route",
+    "version": "show version",
+    "clock": "show clock",
+    "cdp": "show cdp",
+    "lldp": "show lldp",
+    "lldp run": "lldp run",
+    "cdp run": "cdp run",
+}
 
-@app.route("/api/interfaces", methods=["GET"])
-def interfaces():
-    data = get_interfaces()
-    return jsonify(data)
+DEVICE = {
+    "device_type": "cisco_xe",
+    "host": "208.8.8.50",
+    "username": "admin",
+    "password": "C1sc0123",
+}
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/run", methods=["POST"])
+def run_command():
+    action = request.json.get("action")
+
+    if action not in COMMANDS:
+        return jsonify({"error": "Invalid command"}), 400
+
+    conn = ConnectHandler(**DEVICE)
+    output = conn.send_command(COMMANDS[action])
+    conn.disconnect()
+
+    return jsonify({"output": output})
 
 
 if __name__ == "__main__":
