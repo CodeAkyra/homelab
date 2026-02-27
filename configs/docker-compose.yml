@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: vuln_website
+    ports:
+      - "8080:80:
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: vuln_user
+      MYSQL_PASSWORD: vuln_pass
+      MYSQL_DATABASE: test
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - vuln_network
+
+  db:
+    image: mysql:8.0
+    container_name: vuln_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: vuln_user
+      MYSQL_PASSWORD: vuln_pass
+      MYSQL_DATABASE: test
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - vuln_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: vuln_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: vuln_user
+      PMA_PASSWORD: vuln_pass
+      PMA_DB: test
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - vuln_network
+
+volumes:
+  db_data:
+
+networks:
+  vuln_network:
+    driver: bridge
