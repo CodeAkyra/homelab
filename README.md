@@ -18,3 +18,6 @@ The goal of this homelab is to:
 - Practice real-world network engineering and DevNet concepts
 
 This repository serves as both a **learning lab** and a **portfolio of network automation and virtualization projects**.
+
+>[!WARNING]
+>`edited: 02/28/2026`, README.md IS OUTDATED 
