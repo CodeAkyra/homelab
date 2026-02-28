@@ -1,0 +1,107 @@
+SERVER MANAGER
+Add Roles and Features
+  1. Active Directory Domain Services
+    Next
+      Next
+        Next
+          Select "Active Directory Domain Services"
+            Add Features
+              Next
+                Next
+                  Next
+                    Install
+                      Click "Promote this server to a domain controller"
+                        Select "Add a new forest"
+                          Windows + R > ncpa.cpl
+                          Right click your current network connection and click properties
+                          Select "Internet Protocol Version 4 (TCP/IPv4)" and click properties
+                          Make sure it's set to static
+                          
+                          IP Address: 208.8.8.200
+                          Subnet Mask: 255.255.255.0
+                          Default Gateway: 208.8.8.2
+                          Preferred DNS Server: 127.0.0.1
+
+                          Click "Advanced"
+                          Click "DNS"
+                          Click "Append these DNS suffix (in order)"
+                          Click "Add" (Mark.com)
+                          Inside "DNS suffix for this connection" (Enter the domain suffix you created)
+                          DNS suffix for this connection: Mark.com
+                          Click "Ok" all the way and close ncpa.cpl
+                          
+                        DEPLOYMENT CONFIGURATION
+                          For the Root domain, type the DNS suffix you created
+                          Click "Next"
+                        DOMAIN CONTROLLER OPTIONS
+                          Password: C1sc0123
+                          Confirm Password: C1sc0123
+                          Click "Next"
+                        DNS OPTIONS
+                          Click "Next"
+                        ADDITIONAL OPTIONS
+                          The NextBIOS domain name: MARK
+                          Click "Next"
+                        PATHS
+                          Click "Next"
+                        REVIEW OPTIONS
+                          #You may review your selections first before proceeding
+                          Click "Next"
+                        PREREQUISITES CHECK
+                          Click "Install"
+                          #Wait for the installation to finish, once it's done, it will automatically restart the Windows Server
+                          #Once the Windows Server finished installing and rebooting, you may now login 
+  2. DNS Server
+  3. Active Directory Certificate Services
+    Next
+      Next
+        Next
+          Select "Active Directory Certificate Services"
+            Add Features
+              Next
+                Next
+                  Next
+                    Install
+                      Click "Configure Active Directory Certificate Services on the destiantion server"
+                      CREDENTIALS
+                        Click "Next"
+                      ROLES SERVICES
+                        Select "Certification Authorithy"
+                        Click "Next"
+                      SETUP TYPE
+                        Select "Enterprise CA"
+                        Click "Next"
+                      CA TYPE
+                        Select "Root CA"
+                        Click "Next"
+                      PRIVATE KEY
+                        Select "Create a new private key"
+                        Click "Next"
+                      CRYPTHOGRAPHY FOR CA
+                        Select a crpytographic provider: RSA#Microsoft Software Key Storage Provider
+                        Key length: 2048
+                        Select a hash algorithm for signing certificate issued by this CA: SHA256
+                        Click "Next"
+                      CA Name
+                        Click "Next"
+                      VALIDITY PERIOD
+                        5 Years
+                        Click "Next"
+                      CA DATABASE
+                        Click "Next"
+                      CONFIRMATION
+                       Click "Configure"
+                       Click "Close"
+
+  4. Network Policy and Access Services
+    Next
+      Next
+        Next
+          Select "Network Policy and Access Services"
+            Add Features
+              Next
+                Next
+                  Next
+                    Install
+                      Click "Close"
+  5. Web Server (IIS)

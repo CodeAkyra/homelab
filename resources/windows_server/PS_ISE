@@ -1,0 +1,6 @@
+# Disable Firewall
+Get-NetFirewall
+Set-NetFirewall -Name public,private,domain -Enabled false
+
+# Add feature
+Add-WindowsFeature -name dns -IncludeManagementTools
