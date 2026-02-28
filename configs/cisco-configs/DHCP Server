@@ -1,0 +1,94 @@
+! ROUTER 1841
+  en
+    config t
+      hostname R1841
+      ip domain-name R1841
+      crypto key generate rsa
+        2048
+      no ip domain lookup
+      service password-encryption
+      enable secret pass
+      user admin privilege 15 secret pass
+      line con 0
+        logging sync
+        login local
+        exec 0 0
+        exit
+      line vty 0 4
+        logging sync
+        login local
+        exec 5 0
+        exit
+      service dhcp
+      ip dhcp pool PRIMARY
+        network 192.168.1.0 255.255.255.0
+        default 192.168.1.1
+        domain-name www.website1.com
+      ip dhcp pool SECONDARY
+        network 192.168.2.0 255.255.255.0
+        default 192.168.2.1
+        domain-name www.website2.com
+        exit
+      int f0/1  
+        no shut
+        exit
+      int f0/1.1
+        encapsulation dot1q 10
+        ip add 192.168.1.1 255.255.255.0
+        no shut
+        exit
+      int f0/1.2
+        encapsulation dot1q 20
+        ip add 192.168.2.1 255.255.255.0
+        no shut
+        exit
+      ip dhcp excluded-address 192.168.1.1 192.168.1.100
+      ip dhcp excluded-address 192.168.2.1 192.168.2.100
+      do show ip int br
+      do show ip dhcp binding
+      do show ip dhcp pool
+      do wr
+
+! SWITCH1 2960-24TT
+  en
+    conf t
+    hostname S2960-24
+    no ip domain lookup
+    enable secret pass
+    user admin privilege 15 secret pass
+    line con 0
+      logging sync
+      login local
+      exec 0 0
+      exit
+    line vty 0 4
+      logging sync
+      login local
+      exec  5 0
+      exit
+    vlan 10
+      name PRIMARY
+      exit
+    vlan 20
+      name SECONDARY
+      exit
+    do sh vlan br
+    int range f0/1-12
+      switchport mode access
+      switchport access vlan 10
+      exit
+    int range f0/13-24
+      switchport mode access
+      switchport access vlan 20
+    do sh vlan br
+    int g0/1
+      switchport mode trunk
+      exit
+    do sh int trunk
+
+connect PC1 to SWITCH1 port 1
+connect PC2 to SWITCH1 port 13
+
+configure PC1 and PC2 network settings to DHCP
+
+      

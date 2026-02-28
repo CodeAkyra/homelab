@@ -1,0 +1,164 @@
+5 Router 1841
+MODULES:
+  + HWIC-2T - Cisco 2-Port Serial High-Speed WAN Interface Card
+
+#####################################################################################
+BASIC SETUP CONFIGURATION
+
+!R1-1841
+  en
+    config t
+      hostname R1-1841
+      no ip domain lookup
+      user admin privilege 15 secret pass
+      service password-encryption
+      enable secret pass
+      int s0/1/0
+        ip add 10.10.10.1 255.255.255.0
+        no shut
+        exit
+      int s0/1/1
+        ip add 50.50.50.2 255.255.255.0
+        no shut
+        exit
+      do sh ip int br
+
+!R2-1841
+  en
+    config t
+      hostname R2-1841
+      no ip domain lookup
+      user admin privilege 15 secret pass
+      service password-encryption
+      enable secret pass
+      int s0/1/1
+        ip add 10.10.10.2 255.255.255.0
+        no shut
+        exit
+      int s0/1/0
+        ip add 20.20.20.1 255.255.255.0
+        no shut
+        exit
+      do sh ip int br
+
+!R3-1841
+  en
+    config t
+      hostname R3-1841
+      no ip domain lookup
+      user admin privilege 15 secret pass
+      service password-encryption
+      enable secret pass
+      int s0/1/1
+        ip add 20.20.20.2 255.255.255.0
+        no shut
+        exit
+      int s0/1/0
+        ip add 30.30.30.1 255.255.255.0
+        no shut
+        exit
+      do sh ip int br
+
+!R4-1841
+  en
+    conf t
+      hostname R4-1841
+      no ip domain lookup
+      user admin privilege 15 secret pass
+      service password-encryption
+      enable secret pass
+      int s0/1/1
+        ip add 30.30.30.2 255.255.255.0
+        no shut
+        exit
+      int s0/1/0
+        ip add 40.40.40.1 255.255.255.0
+        no shut
+        exit
+      do sh ip int br
+
+!R5-1841
+  en
+    config t
+      hostname R5-1841
+      no ip domain lookup
+      user admin privilege 15 secret pass
+      service password-encryption
+      enable secret pass
+      int s0/1/1
+        ip add 40.40.40.2 255.255.255.0
+        no shut
+        exit
+      int s0/1/0
+        ip add 50.50.50.1 255.255.255.0
+        no shut
+        exit
+      do sh ip int br
+
+#####################################################################################
+OSPF CONFIGURATION
+
+R1-1841
+  en
+    config t
+    ! check mo ip address
+    do sh ip int br
+    ![process ID = 1000] wala siyang impact sa config or hindi required na same ang process id sa ibang routers
+    router ospf 1000
+      network 10.10.10.0 0.0.0.255 area 0 
+      network 50.50.50.0 0.0.0.255 area 0
+      exit
+
+R2-1841
+  en
+    config t
+      router ospf 1000
+        network 20.20.20.0 0.0.0.255 area 0
+        network 10.10.10.0 0.0.0.255 area 0
+        exit
+
+R3-1841
+  en
+    config t
+      router ospf 1000
+        network 30.30.30.0 0.0.0.255 area 0
+        network 20.20.20.0 0.0.0.255 area 0
+        exit
+
+R4-1841
+  en
+    config t
+      router ospf 1000
+        network 40.40.40.0 0.0.0.255 area 0
+        network 30.30.30.0 0.0.0.255 area 0
+        exit
+
+R5-1841
+  en
+    config t
+      router ospf 1000
+        network 50.50.50.0 0.0.0.255 area 0
+        network 40.40.40.0 0.0.0.255 area 0
+        exit
+
+!try sending icmp sa mga routers
+
+#####################################################################################
+
+#review of used commands
+en/enable - from user to privileged mode
+config t/configure terminal - to configure terminal
+hostname - to change yung current name ng device from "Router>" to "R1-1841>"
+user admin privilege 15 secret pass - to create a user named "admin" with privilege mode since naka set sa 15 and "secret" is actually password but encrypted siya
+service password-encryption - if yung user hindi gumamit ng "secret", just regular "password" and the service is enabled, mag eencrypt yung mga password. once encrypted, stays encrypted.
+enable secret pass - for security purposes, adding password sa privilege mode na naka encrypt din
+int (interface) - configuring specific network interface
+ip add (ip address) (subnetmask) - assigning ip address and subnetmask to that specific network interface or port
+no shut - turn on a specific port
+exit - exit that specific configuration interface????
+do show ip interface brief - bried summary of ip status and configuration
+router ospf (process id) - enable a routing process which ang ginamit is open shortest path first, for the process ID, di siya nag mamatter
+network (ip address) (wildcard) area (area ID) - the ip address is the network address or a host address within the network you want to include in ospf, wildcard mask determines which bits of the ip address must match to enable ospf on an interface
+
+
+in OSPF, as long as the router is in the same area with other routers, they know the whole map. same area must have the same identical LSDB or Link-State Database, lahat ng router meron nan na naka store sa local database or sa RAM
