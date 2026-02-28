@@ -1,0 +1,71 @@
+#I'll create a .md for this
+
+pve-server
+  >_Shell
+    cd var/lib/vz
+      mkdir wazuh && cd wazuh
+        wget https://packages.wazuh.com/4.x/vm/wazuh-4.13.1.ova
+          do "ls" to verify
+            tar -xvf wazuh-4.x.ova
+
+Create VM
+  General
+    Node: pve-server
+    VM ID: 100
+    Name: Wazuh
+  OS
+    Do not use any media
+    Guest OS:
+      Type: Linux
+      Version: 6.x - 2.6 Kernel
+  System
+    Graphic Card: Default
+    Machine: Default (i440fx) or q35
+    BIOS: Default (SeaBIOS)
+    SCSI Controller: VirtiO SCSI single
+  Disks
+    delete disk
+  CPU
+    Sockets: 1
+    Cores: 4 (Recommended by Wazuh)
+    Type: host
+  Memory
+    Memory (MiB): 8192
+  Network
+    Default
+  Finish
+
+pve-server
+  >_Shell
+    cd var/lib/vz/wazuh
+      do "ls" and look for .vmdk
+        qm import 100 .vmdk local-lvm --format raw
+        # qm is proxmox vm manager command
+        # importdisk is a sub command to import a disk image into an existing vm
+        # yung vm id
+        # .vmdk is yung source file
+        # local-lvm is the target storage
+        # --format raw converts the source vmdk file into the raw format
+
+100(Wazuh)
+  Hardware
+    Unused Disk 0
+      Disk
+        Add
+  Options
+    Boot Order
+      uncheck ide2 and net0
+      check scsi0
+  Start VM
+
+STATIC IP ADDRESSING
+100(Wazuh)
+  Console
+    cd /etc/sysconfig/network-scripts
+      sudo nano ifcfg-eth0
+        BOOTPROTO=dhcp > static
+        IPADDR=X.X.X.X
+        NETMASK=255.255.255.0
+        GATEWAY=X.X.X.X
+        save
+      sudo systemctl restart network.service
