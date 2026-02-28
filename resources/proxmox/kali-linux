@@ -1,0 +1,7 @@
+local (pve-server)
+  ISO Images
+    Upload
+      Select File (kali-linux.iso)
+        Upload
+pve-server
+  Create VM
