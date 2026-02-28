@@ -1,0 +1,32 @@
+Kali-Linux
+Download XAMPP https://www.apachefriends.org/
+  XAMPP for Linux
+    Open Kali/Folder
+      Click Downloads
+        Inside Downloads, Right-click > Open Terminal Here
+          $ ls -l to verify file type and permissions 
+
+            ┌──(kali㉿kali)-[~/Downloads]
+            └─$ ls -l 
+            total 156728
+            -rw-rw-r-- 1 kali kali 160483784 Oct 25 07:29 xampp-linux-x64-8.2.12-0-installer.run
+
+          There is only Read and Write Permission, there is no Execute Permission for the current user
+
+          $ sudo chmod +x xampp-linux-x64-8.2.12-0-installer.run
+
+            ┌──(kali㉿kali)-[~/Downloads]
+            └─$ ls -l
+            total 156728
+            -rwxrwxr-x 1 kali kali 160483784 Oct 25 07:29 xampp-linux-x64-8.2.12-0-installer.run
+
+          $ clear
+          $ sudo ./xampp-linux-x64-8.2.12-0-installer.run
+
+tapos normal setup nalang siya ng XAMPP
+punta lang din sa htdocs folder, then mag git clone ka nalang sa loob
+
+
+to run XAMPP
+open terminal
+  sudo opt/lampp/manager-linux-x64.run

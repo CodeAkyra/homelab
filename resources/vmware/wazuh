@@ -1,0 +1,37 @@
+ACCESS WAZUH WEB GUI
+root
+C1sc0123..
+  #stop firewalld
+    sudo systemctl stop firewalld
+
+  #access web gui via ip address, depende kung anong sinet mo na ipaddress sa VMnet
+    ip add
+  
+  #if may problem sa web gui or di mo ma access ng maayos, run the following commands sa terminal
+    sudo systemctl start wazuh-manager
+
+  #check mo muna if accessible na siya after wazuh-manager, if wala parin next execute mo next command
+    sudo systemctl start wazuh-dashboard
+ 
+  #check muna ulet if meron na, if wala parin execute mo tong last command
+    sudo systemctl start wazuh-indexer
+
+DEPLOY AGENT
+  deploy new agent
+    select the package to download and install on your system
+      Windows MSI 32/64 bits
+        Assign a server address:
+        #ipaddress ng wazuh manager mo
+        Assign an agent name:
+        #optional
+        Select one or more existing group:
+        #default lang
+
+        #then may naka ready ng command sa ibaba na irurun mo nalang sa PowerShell as Administrator and dapat PowerShell 3.0 or greater, execute mo narin tong command sa PS " $PSVersionTable " para ma check version
+        Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.12.0-1.msi -OutFile $env:tmp\wazuh-agent; msiexec.exe /i $env:tmp\wazuh-agent /q WAZUH_MANAGER='208.8.8.129' WAZUH_AGENT_NAME='Agent-Name1' 
+
+        #run this command to start Wazuh Service
+        NET START WazuhSvc
+
+        #to verify if running ang wazuh agent, open Task Manager or simply Ctrl + Shift + Esc
+        #open Process and find Wazuh Agent

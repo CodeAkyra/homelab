@@ -1,0 +1,54 @@
+open FortiGate-VM64.ovf
+  Edit virtual machine settings
+    All Network Adapter = Uncheck "Connect at power on"
+    Make sure Network Adapter, Network Adapter 3 - 4 is set to "Bridged (Automatic)
+    Set Network Adapter 2 to "LAN segment"
+      Add new Global LAN segment and select
+      Click OK
+      Power On
+
+      once the system asked you to login
+      type admin and for the password, just hit enter to create new password
+
+
+get sys status
+
+config sys ntp
+  set ntpsync disable
+  set type custom
+  end
+
+Turn off FortiGate VM > Shut Down Guest
+  Edit virtual machine settings
+    Enable Connect at power on for Network Adapter and Network Adapter 2
+    Power on VM
+    verify if "Connected" is checked for both Network Adapters
+
+config system interface (config terminal)
+  edit port1 (interface f0/1)
+    set mode dhcp (ip dhcp)
+    set role wan
+    set alias WAN (description
+    set allowaccess http https telnet ssh ping (similar siya kay transport input <protocol>)
+    show
+    next
+
+  edit port2 (interface f0/2)
+    set mode static
+    set role lan
+    set ip 10.10.10.1/24
+    set allowaccess http https telnet ssh ping
+    set alias Internal
+    show
+    end
+
+show sys interface
+
+get sys int phys (show ip interface brief)
+
+
+
+#############################################################################################
+connect PC1 to FortiGate via LAN Segment
+  execute ping 10.10.10.100
+  

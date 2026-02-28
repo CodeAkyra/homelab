@@ -1,0 +1,97 @@
+connect both to VMnet 10
+CSR1000V
+  en
+    config t
+      no ip domain lookup
+      line vty 0 4
+        login local
+        transport input ssh telnet
+        logging sync
+        exec  0 0
+        end
+      user admin privilege 15 secret pass
+      line con 0
+        login
+        logging sync
+        exec 5 0
+        end
+      enable secret pass
+      crypto key generate rsa
+        2048
+      lldp run
+      int g1
+        ip add 10.10.10.100
+        no shut
+        end
+
+FortiGate
+  config sys int
+    edit port1
+      set static
+      set ip 10.10.10.200 255.255.255.0
+      set allowaccess ssh telnet http https ping
+      set lldp-transmission enable
+      set lldp-reception enable
+      set device-identification enable
+      end
+  diagnose lldp rx neighbor summary
+  
+      
+
+
+CSR1000V OUTPUT:
+#########################################################################
+CSR1000v(config)#do sh lldp neighbors 
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capability      Port ID
+FG##############    Gi1            120        R               WAN
+
+Total entries displayed: 1
+#########################################################################
+CSR1000v#show lldp neighbors detail 
+------------------------------------------------
+Local Intf: Gi1
+Chassis id: 000c.####.####
+Port id: WAN
+Port Description - not advertised
+System Name: FG##############
+
+System Description: 
+FortiGate-VM64 v7.6.4,build3596,250820 (GA.F)
+
+Time remaining: 94 seconds
+System Capabilities: B,R
+Enabled Capabilities: R
+Management Addresses - not advertised
+Auto Negotiation - not supported
+Physical media capabilities - not advertised
+Media Attachment Unit type - not advertised
+Vlan ID: - not advertised
+
+MED Information:
+
+    MED Codes:
+          (NP) Network Policy, (LI) Location Identification
+          (PS) Power Source Entity, (PD) Power Device
+          (IN) Inventory
+
+    Manufacturer: Fortinet
+    Model: FGT_VM64
+    Capabilities: NP, IN
+    Device type: Network connectivity
+    Network Policies - not advertised
+    Power requirements - not advertised
+    Location - not advertised
+
+
+Total entries displayed: 1
+#########################################################################
+
+
+FortiGate-7.6.4 OUTPUT:
+diagnose rm neighbor summary
+diagnose rm neighbor detail
+  both no output ooooooooof, ayusin ko maya
