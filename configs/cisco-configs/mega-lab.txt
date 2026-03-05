@@ -1,0 +1,289 @@
+# INITIAL SETUP FOR MEGA-LAB
+
+### R1
+  en
+    conf t
+      hostname R1
+      enable secret jeremysitlab
+      username cisco secret ccna
+      line con 0
+        login local
+        exec-timeout 30 0
+        logging synchronous
+        exit
+      do wr
+
+### CSW1, CSW2
+  en
+    conf t
+      hostname CSW1
+      enable algorithm-type scrypt secret jeremysitlab #type 9 hashing
+      username cisco algorithm-type scrypt secret ccna
+      line con 0
+        login local
+        exec-timeout 30 0
+        logging synchronous
+        exit
+      do wr
+
+### DSW-A1, DSW-A2, DSW-B1, DSW-B2
+  en
+    conf t
+      hostname DSW-A1
+      enable algorithm-type scrypt secret jeremysitlab
+      username cisco algorithm-type scrypt secret ccna
+      line con 0
+        login local
+        exec-timeout 30 0
+        logging synchronous
+        exit
+      do wr
+
+### ASW-A1, ASW-A2, ASW-A3, ASW-B1, ASW-B2, ASW-B3
+  en
+    conf t
+      hostname ASW-A1
+      enable secret jeremysitlab
+      username cisco secret ccna
+      line con 0
+        login local
+        exec-timeout 30 0
+        logging synchronous
+        exit
+      do wr
+
+# PART 2 - VLANs, Layer-2 EhterChannel
+
+###  DSW-A1, DSW-A2
+  en
+    conf t
+      do sh cdp neig
+      int range g1/0/4-5
+        channel-group 1 mode desirable #cisco proprietary protocol PAgP
+        exit
+      do sh eth sum
+      do wr
+
+    # configure all links between access and distribution, including etherchannels, as trunk links.
+    
+      do sh cdp neig
+      int range g1/0/1-3
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000 #unused
+        switchport trunk allowed vlan 10,20,40,99
+        int p1
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000
+        switchport trunk allowed vlan 10,20,40,99
+        exit
+      do wr
+
+      # create vtp domain and change the version to 2
+      do sh vtp status
+      vtp domain JeremysITLab
+      vtp version 2
+      do wr
+
+      vlan 10
+        name PCs
+        vlan 20
+        name Phones
+        vlan 40
+        name Wi-Fi
+        vlan 99
+        name Management
+      
+      # shut all unused ports
+      int range g1/0/6-24
+        shutdown
+        int range g1/1/3-4
+        shutdown
+        exit
+      do wr
+
+### ASW-A1, ASW-A2, ASW-A3
+  en
+    conf t
+      do sh cdp neig
+      int range g0/1-2
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000
+        switchport trunk allowed vlan 10,20,40,99
+        exit
+      do wr
+
+      # make sure that access switches join the domain and change the mode to client
+      do sh vtp status
+      vtp mode client
+      do wr      
+      
+      # ASW-A1 only, remove hash
+      # int f0/1
+      #   switchport mode access
+      #   switchport nonegotiate
+      #   switchport access vlan 99
+  
+      # ASW-A2, ASW-A3 only
+      # int f0/1
+      #   switchport mode access
+      #   switchport nonegotiate
+      #   switchport access vlan 10
+      #   switchport voice vlan 20
+      #   do wr
+      
+      # shut unused ports
+      # for ASW-A1
+      int range f0/3-24
+        shut
+        exit
+      # ASW-A2, ASW-A3
+      int range f0/2-24
+        shut
+        exit
+      do wr
+           
+
+### DSW-B1, DSW-B2
+  en
+    conf t
+      do sh cdp neig
+      int range g1/0/4-5
+        channel-group 1 mode active
+        exit
+      do sh eth sum
+      do wr
+
+      do sh cdp neig
+      int range g1/0/1-3
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000
+        switchport trunk allowed vlan 10,20,30,99
+        int p1
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000
+        switchport trunk allowed vlan 10,20,30,99
+        exit
+      do wr
+      
+      do sh vtp status
+      vtp domain JeremysITLab
+      vtp version 2
+      do wr
+      
+      vlan 10
+        name PCs
+        vlan 20
+        name Phones
+        vlan 30
+        name Servers
+        vlan 99
+        name Management
+        exit
+      do wr
+
+      # shut all unused ports
+      int range g1/0/6-24
+        shutdown
+        int range g1/1/3-4
+        shutdown
+        exit
+      do wr
+
+### ASW-B1, ASW-B2, ASW-B3
+  en
+    conf t
+      do sh cdp neig
+      int range g0/1-2
+        switchport mode trunk
+        switchport nonegotiate
+        switchport trunk native vlan 1000
+        switchport trunk allowed vlan 10,20,30,99
+        exit
+      do wr
+      do sh vtp status
+      vtp mode client
+      do wr
+
+      # ASW-B1 only, remove hash
+      # int f0/1
+      #   switchport mode access
+      #   switchport nonegotiate
+      #   switchport access vlan 99
+
+      # ASW-B2 only
+      # int f0/1
+      #   switchport mode access
+      #   switchport nonegotiate
+      #   switchport access vlan 10
+      #   switchport voice vlan 20
+      #   do wr
+
+      # ASW-B3 only
+      # int f0/1
+      #   switchport mode access
+      #   switchport nonegotiate
+      #   switchport access vlan 30
+      #   do wr
+
+      # ASW-A1's connection to WLC1
+      # int f0/2
+      #   switchport mode trunk
+      #   switchport trunk allowed vlan 40, 99
+      #   switchport trunk native vlan 99
+      #   switchport nonegotiate
+      #   do wr
+
+      # shut unused ports
+      int range f0/2-24
+        shut
+        exit
+      do wr
+
+
+### vim tab shortcut cisco commands
+enable
+configure terminal
+do
+show
+hostname
+enable
+algorithm-type
+scrypt
+secret
+username
+password
+line
+console
+login local
+logging synchronous
+exec-timeout
+exit
+interface
+GigabitEthernet
+FastEthernet
+switchport
+mode
+trunk
+access
+channel-group
+active
+desirable
+passive
+nonegotiate
+etherchannel
+summary
+details
+cdp
+allowed
+native
+port-channel
+
+
+
+
+
