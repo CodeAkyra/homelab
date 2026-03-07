@@ -1,4 +1,6 @@
 target/
 src/
+rust/pingo/
 Cargo.lock
 Cargo.toml
+
