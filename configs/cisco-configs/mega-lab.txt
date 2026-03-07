@@ -245,6 +245,750 @@
       do wr
 
 
+##################################################################################################################################################################################################################################################################################
+DISREGARD FIRST CONFIG
+
+PART 1
+
+###### ASW-A
+en
+conf t
+hostname ASW-A1
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname ASW-A2
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname ASW-A3
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+###### ASW-B
+en
+conf t
+hostname ASW-B1
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname ASW-B2
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname ASW-B3
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+###### DSW-A
+en
+conf t
+hostname DSW-A1
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname DSW-A2
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+###### DSW-B
+en
+conf t
+hostname DSW-B1
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname DSW-B2
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+
+###### CSW
+en
+conf t
+hostname CSW1
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+en
+conf t
+hostname CSW2
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+###### R1
+
+en
+conf t
+hostname R1
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+login local
+logging synchronous
+exec-timeout 30 0
+exit
+do wr
+
+
+###### PART 2
+
+#### DSW-A, DSW-B
+#DSW-A1, DSW-A2
+int range g1/0/4-5
+channel-group 1 mode desirable
+do wr
+exit
+
+#DSW-B1, DSW-B2
+int range g1/0/4-5
+channel-group 1 mode active
+do wr
+exit
+
+#DSW-A1, DSW-A2
+int range g1/0/1-3
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,40,99
+int p1
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,40,99
+exit
+do wr
+
+#DSW-B1, DSW-B2
+int range g1/0/1-3
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,30,99
+int p1
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,30,99
+exit
+do wr
+
+#ASW-A1, ASW-A2, ASW-A3
+int range g0/1-2
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,40,99
+exit
+do wr
+
+#ASW-B1, ASW-B2, ASW-B3
+int range g0/1-2
+switchport mode trunk
+switchport nonegotiate
+switchport trunk native vlan 1000
+switchport trunk allowed vlan 10,20,30,99
+exit
+do wr
+
+#DSW-A1, DSW-B1
+vtp domain JeremysITLab
+vtp version 2
+do wr
+
+#ASW-A1, ASW-A2, ASW-A3, ASW-B1, ASW-B2, ASW-B3
+vtp mode client
+do wr
+
+
+#DSW-A1
+vlan 10
+name PCs
+vlan 20
+name Phones
+vlan 40
+name Wi-Fi
+vlan 99
+name Management
+do wr
+exit
+
+#DSW-B1
+vlan 10
+name PCs
+vlan 20
+name Phones
+vlan 30
+name Servers
+vlan 99
+name Management
+do wr
+exit
+
+#ASW-A1
+int f0/1
+switchport mode access
+switchport nonegotiate
+switchport access vlan 99
+exit
+do wr
+
+#ASW-A2- ASW-A3, ASW-B2
+int f0/1
+switchport mode access
+switchport nonegotiate
+switchport access vlan 10
+switchport voice vlan 20
+exit
+do wr
+
+#ASW-B3
+int f0/1
+switchport mode access
+switch nonegotiate
+switchport access vlan 30
+exit
+do wr
+
+#ASW-A1
+int f0/2
+switchport mode trunk
+switchport nonegotiate
+switchport trunk allowed vlan 40,99
+switchport trunk native vlan 99
+exit
+do wr
+
+
+#ASW-A1
+int range f0/3-24
+shutdown
+exit
+do wr
+do sh ip int br
+
+
+#ASW-A2, ASW-A3, ASW-B1, ASW-B2, ASW-B3
+int range f0/2-24
+shutdown
+exit
+do wr
+do sh ip int br
+
+#DSW-A1, DSW-A2, DSW-B1, DSW-B2
+int range g1/0/6-24, g1/1/3-4
+shutdown
+exit
+do wr
+do sh ip int br
+
+#CSW1, CSW2
+int range g1/0/4-24
+shutdown
+exit
+do wr
+do sh ip int br
+
+
+###### PART 3
+
+### R1
+en
+conf t
+int g0/0/0
+ip add dhcp
+no shut
+int g0/1/0
+ip add dhcp
+exit
+int g0/0
+ip add 10.0.0.33 255.255.255.252
+no shut
+int g0/1
+ip add 10.0.0.37 255.255.255.252
+no shut
+exit
+do wr
+
+### ALL CORE AND DISTRIBUTION SWITCHES
+
+ip routing
+do wr
+
+# CSW1
+
+int range g1/0/2-3
+no switchport
+channel-group 1 mode desirable
+no shut
+int p1
+no switchport
+ip add 10.0.0.41 255.255.255.252
+no shut
+exit
+do wr
+
+# CSW2
+
+int range g1/0/2-3
+no switchport
+channel-group 1 mode desirable
+no shut
+int p1
+no switchport
+ip add 10.0.0.42 255.255.255.252
+no shut
+exit
+do wr
+
+# CSW1
+
+int g1/0/1
+no switchport
+ip add 10.0.0.34 255.255.255.252
+no shut
+
+int g1/1/1
+no switchport
+ip add 10.0.0.45 255.255.255.252
+no shut
+
+int g1/1/2
+no switchport
+ip add 10.0.0.49 255.255.255.252
+no shut
+
+int g1/1/3
+no switchport
+ip add 10.0.0.53 255.255.255.252
+no shut
+
+int g1/1/4
+no switchport
+ip add 10.0.0.57 255.255.255.252
+no shut
+
+int l0
+ip add 10.0.0.77 255.255.255.255
+no shut
+exit
+do wr
+
+
+# CSW2
+
+int g1/0/1
+no switchport
+ip add 10.0.0.38 255.255.255.252
+
+int g1/1/1
+no switchport
+ip add 10.0.0.61 255.255.255.252
+
+int g1/1/2
+no switchport
+ip add 10.0.0.65 255.255.255.252
+
+int g1/1/3
+no switchport
+ip add 10.0.0.69 255.255.255.252
+
+int g1/1/4
+no switchport
+ip add 10.0.0.73 255.255.255.252
+
+int l0
+ip add 10.0.0.78 255.255.255.255
+exit
+do wr
+
+# DSW-A1
+
+int g1/1/1
+no switchport
+ip add 10.0.0.46 255.255.255.252
+int g1/1/2
+no switchport
+ip add 10.0.0.62 255.255.255.252
+int l0
+ip add 10.0.0.79 255.255.255.255
+exit
+do wr
+do sh ip int br
+
+# DSW-A2
+
+int g1/1/1
+no switchport
+ip add 10.0.0.50 255.255.255.252
+int g1/1/2
+no switchport
+ip add 10.0.0.66 255.255.255.252
+int l0
+ip add 10.0.0.80 255.255.255.255
+exit
+do wr
+do sh ip int br
+
+# DSW-B1
+
+int g1/1/1
+no switchport
+ip add 10.0.0.54 255.255.255.252
+int g1/1/2
+no switchport
+ip add 10.0.0.70 255.255.255.252
+int l0
+ip add 10.0.0.81 255.255.255.255
+exit
+do wr
+do sh ip int br
+
+
+# DSW-B2
+
+int g1/1/1
+no switchport
+ip add 10.0.0.58 255.255.255.252
+int g1/1/2
+no switchport
+ip add 10.0.0.74 255.255.255.252
+int l0
+ip add 10.0.0.82 255.255.255.255
+exit
+do wr
+do sh ip int br
+
+
+# ASW-A1
+
+ip default-gateway 10.0.0.1
+int vlan 99
+ip add 10.0.0.4 255.255.255.240
+no shut
+exit
+do wr
+
+# ASW-A2
+
+ip default-gateway 10.0.0.1
+int vlan 99
+ip add 10.0.0.5 255.255.255.240
+no shut
+exit
+do wr
+
+# ASW-A3
+
+ip default-gateway 10.0.0.1
+int vlan 99
+ip add 10.0.0.6 255.255.255.240
+no shut
+exit
+do wr
+
+# ASW-B1
+
+ip default-gateway 10.0.0.17
+int vlan 99
+ip add 10.0.0.20 255.255.255.240
+no shut
+exit
+do wr
+
+# ASW-B2
+
+ip default-gateway 10.0.0.17
+int vlan 99
+ip add 10.0.0.21 255.255.255.240
+no shut
+exit
+do wr
+
+# ASW-B3
+
+ip default-gateway 10.0.0.17
+int vlan 99
+ip add 10.0.0.22 255.255.255.240
+no shut
+exit
+do wr
+
+
+### DSW-A1
+# VLAN 99
+
+int vlan 99
+ip add 10.0.0.2 255.255.255.240
+standby ver 2
+standby 1 ip 10.0.0.1
+standby 1 prio 105
+standby 1 preempt
+exit
+do wr
+do sh stand br
+
+
+# VLAN 10
+
+int vlan 10
+ip add 10.1.0.2 255.255.255.0
+standby ver 2
+standby 2 ip 10.1.0.1
+standby 2 prio 105
+standby 2 preempt
+exit
+do wr
+do sh stand br
+
+
+# VLAN 20
+
+int vlan 20
+ip add 10.2.0.2 255.255.255.0
+standby ver 2
+standby 3 ip 10.2.0.1
+standby 3 prio 105
+standby 3 preempt
+exit
+do wr
+do sh stand br
+
+# VLAN 40
+
+int vlan 40
+ip add 10.6.0.2 255.255.255.0
+standby ver 2
+standby 4 ip 10.6.0.1
+standby 4 prio 105
+standby 4 preempt
+exit
+do wr
+do sh stand br
+
+### DSW-A2
+# VLAN 99
+
+int vlan 99
+ip add 10.0.0.3 255.255.255.240
+standby ver 2
+standby 1 ip 10.0.0.1
+exit
+do wr
+do sh stand br
+
+# VLAN 10
+
+int vlan 10
+ip add 10.1.0.3 255.255.255.0
+standby ver 2
+standby 2 ip 10.1.0.1
+exit
+do wr
+do sh stand br
+
+# VLAN 20
+
+int vlan 20
+ip add 10.2.0.3 255.255.255.0
+standby ver 2
+standby 3 ip 10.2.0.1
+exit
+do wr
+do sh stand br
+
+# 40
+
+int vlan 40
+ip add 10.6.0.3 255.255.255.0
+standby ver 2
+standby 4 ip 10.6.0.1
+exit
+do wr
+do sh stand br
+
+
+### DSW-B1
+# VLAN 99
+
+int vlan 99
+ip add 10.0.0.18 255.255.255.240
+standby ver 2
+standby 1 ip 10.0.0.17
+standby 1 prio 105
+standby 1 preempt
+exit
+do wr
+do sh stand br
+
+# VLAN 10
+
+int vlan 10
+ip add 10.3.0.2 255.255.255.0
+standby ver 2
+standby 2 ip 10.3.0.1
+standby 2 prio 105
+standby 2 preempt
+exit
+do wr
+do sh stand br
+
+# VLAN 20
+
+int vlan 20
+ip add 10.4.0.2 255.255.255.0
+standby ver 2
+standby 3 ip 10.4.0.1
+standby 3 prio 105
+standby preempt
+exit
+do wr
+do sh stand br
+
+# VLAN 30
+
+int vlan 30
+ip add 10.5.0.2 255.255.255.0
+standby ver 2
+standby 4 ip 10.5.0.1
+standby 4 prio 105
+standby 4 preempt
+exit
+do wr
+do sh stand br
+
+### DSW-B2
+# VLAN 99
+
+int vlan 99
+ip add 10.0.0.19 255.255.255.240
+standby ver 2
+standby 1 ip 10.0.0.17
+exit
+do wr
+do sh stand br
+
+# VLAN 10
+
+int vlan 10
+ip add 10.3.0.3 255.255.255.0
+standby ver 2
+standby 2 ip 10.3.0.1
+exit
+do wr
+do sh stand br
+
+# VLAN 20
+
+int vlan 20
+ip add 10.4.0.3 255.255.255.0
+standby ver 2
+standby 3 ip 10.4.0.1
+exit
+do wr
+do sh stand br
+
+# VLAN 30
+
+int vlan 30
+ip add 10.5.0.3 255.255.255.0
+standby ver 2
+standby 4 ip 10.5.0.1
+exit
+do wr
+do sh stand br
+
+##################################################################################################################################################################################################################################################################################
+
+
+
+
+
 ### vim tab shortcut cisco commands
 enable
 configure terminal
