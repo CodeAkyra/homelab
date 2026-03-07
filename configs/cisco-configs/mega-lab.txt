@@ -833,8 +833,6 @@ int vlan 20
 ip add 10.2.0.2 255.255.255.0
 standby ver 2
 standby 3 ip 10.2.0.1
-standby 3 prio 105
-standby 3 preempt
 exit
 do wr
 do sh stand br
@@ -845,8 +843,6 @@ int vlan 40
 ip add 10.6.0.2 255.255.255.0
 standby ver 2
 standby 4 ip 10.6.0.1
-standby 4 prio 105
-standby 4 preempt
 exit
 do wr
 do sh stand br
@@ -878,16 +874,20 @@ int vlan 20
 ip add 10.2.0.3 255.255.255.0
 standby ver 2
 standby 3 ip 10.2.0.1
+standby 3 prio 105
+standby 3 preempt
 exit
 do wr
 do sh stand br
 
-# 40
+# VLAN 40
 
 int vlan 40
 ip add 10.6.0.3 255.255.255.0
 standby ver 2
 standby 4 ip 10.6.0.1
+standby 4 prio 105
+standby 4 preempt
 exit
 do wr
 do sh stand br
@@ -924,8 +924,6 @@ int vlan 20
 ip add 10.4.0.2 255.255.255.0
 standby ver 2
 standby 3 ip 10.4.0.1
-standby 3 prio 105
-standby preempt
 exit
 do wr
 do sh stand br
@@ -936,8 +934,6 @@ int vlan 30
 ip add 10.5.0.2 255.255.255.0
 standby ver 2
 standby 4 ip 10.5.0.1
-standby 4 prio 105
-standby 4 preempt
 exit
 do wr
 do sh stand br
@@ -969,6 +965,8 @@ int vlan 20
 ip add 10.4.0.3 255.255.255.0
 standby ver 2
 standby 3 ip 10.4.0.1
+standby 3 prio 105
+standby 3 preempt
 exit
 do wr
 do sh stand br
@@ -979,9 +977,62 @@ int vlan 30
 ip add 10.5.0.3 255.255.255.0
 standby ver 2
 standby 4 ip 10.5.0.1
+standby 4 prio 105
+standby 4 preempt
 exit
 do wr
 do sh stand br
+
+
+####### PART 4
+
+# ASW-A1, ASW-A2, ASW-A3, ASW-B1, ASW-B2, ASW-B3
+# DSW-A1, DSW-A2, DSW-B1, DSW-B2
+spanning-tree mode rapid-pvst
+do wr
+
+# DSW-A1
+
+spanning-tree vlan 10,99 priority 0
+spanning-tree vlan 20,40 priority 4096
+do wr
+
+# DSW-A2
+
+spanning-tree vlan 20,40 priority 0
+spanning-tree vlan 10,99 priority 4096
+do wr
+
+# DSW-B1
+
+spanning-tree vlan 10,99 priority 0
+spanning-tree vlan 20,30 priority 4096
+do wr
+
+# DSW-B2
+
+spanning-tree vlan 20,30 priority 0
+spanning-tree vlan 10,99 priority 4096
+do wr
+
+# ASW-A1
+
+int f0/1
+spanning-tree portfast
+spanning-tree bpduguard enable
+int f0/2
+spanning-tree portfast trunk
+spanning-tree bpduguard enable
+exit
+do wr
+
+# ASW-A2, ASW-A3, ASW-B1, ASW-B2, ASW-B3
+
+int f0/1
+spanning-tree portfast
+spanning-tree bpduguard enable
+do wr
+exit
 
 ##################################################################################################################################################################################################################################################################################
 
