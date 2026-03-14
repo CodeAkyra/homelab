@@ -229,6 +229,7 @@ en
       spanning-tree bpduguard enable
       exit
     do wr
+    ip domain-name lab.local (CANNOT GENERATE CRYPTO KEY RSA WITHOUT DOMAIN NAME! WAG KAKALIMUTAN!)
     crypto key generate rsa
       2048
     ip ssh version 2
