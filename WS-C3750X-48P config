@@ -184,7 +184,7 @@ en
 
 
 
-ACCESS INTERNET
+HOME SWITCH CONFIGURATION
 
 en
   conf t
@@ -205,30 +205,57 @@ en
       default-router 192.168.10.1
       dns-server 8.8.8.8 8.8.4.4
       exit
-    ip dhcp excluded-address 192.168.10.1
-    int g1/0/2
-      no switchport
-      ip add 192.168.1.20
-      // ip add dhcp (optional)
-      spanning-tree portfast
-      spanning-tree bpduguard enable
-      no shut
+    ip dhcp pool CAMERA
+      network 172.16.10.0 255.255.255.0
+      default-router 172.16.10.1
+      dns-server 8.8.8.8
       exit
+    ip dhcp pool CCTV_P36
+      host 172.16.10.10 255.255.255.0
+      client-identifier 01xx.xxxx.xxxx.xx (IMOU CCTV MAC Address)
+      default-router 172.16.10.1
+      exit
+    ip dhcp excluded-address 172.16.10.1
+    ip dhcp excluded-address 192.168.10.1
     vlan 10
       name PC
+      exit
+    vlan 20
+      name CAMERA
       exit
     int vlan 10
       ip add 192.168.10.1 255.255.255.0
       no shut
       exit
+    int vlan 20
+      ip add 172.16.10.1 255.255.255.0
+      no shut  
+      exit
     ip route 0.0.0.0 0.0.0.0 192.168.1.1
-    int g1/0/48
-      switchport mode access
-      switchport access vlan 10
+    int range g1/0/1-48
       spanning-tree portfast
       spanning-tree bpduguard enable
       exit
-    do wr
+    int g1/0/2 (PLDT ROUTER)
+      no switchport
+      ip add 192.168.1.20
+      // ip add dhcp (optional)
+      no shut
+      exit
+    int range g1/0/25-36
+      switchport mode access
+      switchport access vlan 20
+      no shut
+      exit
+    int range g1/0/37-48
+      switchport mode access
+      switchport access vlan 10
+      no shut
+      exit
+    int g1/0/36
+      switchport port-security
+      switchport port-security mac-address sticky
+      exit
     ip domain-name lab.local (CANNOT GENERATE CRYPTO KEY RSA WITHOUT DOMAIN NAME! WAG KAKALIMUTAN!)
     crypto key generate rsa
       2048
@@ -236,10 +263,11 @@ en
     line vty 0 4
       transport input ssh
       exit
+    no ip http server
+    no ip secure-server
     do wr
 
 CONFIGURE PLDT ROUTER
-
 
 LOCAL NETWORK
   ROUTING
@@ -250,6 +278,11 @@ LOCAL NETWORK
     Subnet Mask: 255.255.255.0
     Gateway: 192.168.1.12 (IP ADDRESS NI G1/0/2)
 
+    Name: Camera
+    Interface: LAN
+    Network Address: 172.16.10.0
+    Subnet Mask: 255.255.255.0
+    Gateway: 192.168.1.12
 
 
 
