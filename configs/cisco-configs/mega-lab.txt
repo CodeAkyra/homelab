@@ -1387,3 +1387,87 @@ ip helper-address 10.0.0.76
 exit
 do wr
 
+
+# SVR1
+Manually add
+DNS
+google.com = 172.253.62.100
+youtube.com = 152.250.31.93
+jeremysitlab.com = 66.235.200.145
+www.jeremysitlab.com = jeremysitlab.com
+
+# All Routers and Switches
+
+en
+conf t
+
+ip domain-name jeremysitlab.com
+ip name-server 10.5.0.4
+
+ip domain-lookup
+do wr
+
+# R1
+
+en
+conf t
+ntp master 5
+ntp server 216.239.35.0
+ntp authentication-key 1 md5 ccna
+ntp trusted-key 1
+do wr
+
+
+# All Switches
+
+en
+conf t
+ntp authentication-key 1 md5 ccna
+ntp trusted-key 1
+ntp server 10.0.0.76 key 1
+do wr
+
+# All routers and switches
+
+en
+conf t
+snmp-server community SNMPSTRING
+logging trap debugging
+logging 10.5.0.4
+logging buffered 8192
+
+# R1
+
+en
+conf t
+ip ftp username cisco
+ip ftp password cisco
+do wr
+
+# SRV1
+find (c2900-universalk9-mz.SPA.155-3.M4a.bin) at ftp Services
+
+# R1
+
+do copy ftp flash:
+Address or name of remote host []? "10.5.0.4"
+Address or name of remote host []? "c2900-universalk9-mz.SPA.155-3.M4a.bin"
+Destination filename [c2900-universalk9-mz.SPA.155-3.M4a.bin]? (Enter)
+
+boot system flash: c2900-universalk9-mz.SPA.155-3.M4a.bin
+do wr
+
+# check the current IOS version before rebooting
+do sh version
+
+do reload
+# check if the IOS version changes
+en
+conf t
+do sh version
+
+# delete old IOS version
+do sh flash
+delete flash: c2900-universalk9-mz.SPA.151-4.M4.bin
+
+do sh flash
