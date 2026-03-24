@@ -1255,3 +1255,135 @@ int range g1/1/1-2
 ip ospf network point-to-point
 exit
 do wr
+
+PART 6 DHCP, DNS, NTP, SNMP, Syslog, FTP, SSH, NAT
+
+# R1
+en
+conf t
+
+ip dhcp pool A-Mgmt
+network 10.0.0.0 255.255.255.240
+default-router 10.0.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+option 43 ip 10.0.0.7
+exit
+
+ip dhcp pool A-PC
+network 10.1.0.0 255.255.255.0
+default-router 10.1.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+exit
+
+ip dhcp pool A-Phone
+network 10.2.0.0 255.255.255.0
+default-router 10.2.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+exit
+
+ip dhcp pool B-Mgmt
+network 10.0.0.16 255.255.255.240
+default-router 10.0.0.17
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+option 43 ip 10.0.0.7
+exit
+
+ip dhcp pool B-PC
+network 10.3.0.0 255.255.255.0
+default-router 10.3.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+exit
+
+ip dhcp pool B-Phone
+network 10.4.0.0 255.255.255.0
+default-router 10.4.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4
+exit
+
+ip dhcp pool Wi-Fi
+network 10.6.0.0 255.255.255.0
+default-router 10.6.0.1
+domain-name jeremysitlab.com
+dns-server 10.5.0.4c
+exit
+
+ip dhcp excluded-address 10.0.0.1 10.0.0.10
+ip dhcp excluded-address 10.1.0.1 10.1.0.10
+ip dhcp excluded-address 10.2.0.1 10.2.0.10
+ip dhcp excluded-address 10.0.0.17 10.0.0.26
+ip dhcp excluded-address 10.3.0.1 10.3.0.10
+ip dhcp excluded-address 10.4.0.1 10.4.0.10
+ip dhcp excluded-address 10.6.0.1 10.6.0.10
+
+do wr
+
+# DSW-A1
+
+en
+conf t
+
+int vlan 10
+ip helper-address 10.0.0.76
+int vlan 20
+ip helper-address 10.0.0.76
+int vlan 40
+ip helper-address 10.0.0.76
+int vlan 99
+ip helper-address 10.0.0.76
+exit
+do wr
+
+# DSW-A2
+
+en
+conf t
+
+int vlan 10
+ip helper-address 10.0.0.76
+int vlan 20
+ip helper-address 10.0.0.76
+int vlan 40
+ip helper-address 10.0.0.76
+int vlan 99
+ip helper-address 10.0.0.76
+exit
+do wr
+
+# DSW-B1
+
+en
+conf t
+
+int vlan 10
+ip helper-address 10.0.0.76
+int vlan 20
+ip helper-address 10.0.0.76
+int vlan 30
+ip helper-address 10.0.0.76
+int vlan 99
+ip helper-address 10.0.0.76
+exit
+do wr
+
+# DSW-B2
+
+en
+conf t
+
+int vlan 10
+ip helper-address 10.0.0.76
+int vlan 20
+ip helper-address 10.0.0.76
+int vlan 30
+ip helper-address 10.0.0.76
+int vlan 99
+ip helper-address 10.0.0.76
+exit
+do wr
+
